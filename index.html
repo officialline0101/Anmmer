@@ -795,7 +795,7 @@
     </div>
 
     <div class="container">
-        <h1>Anmmer<br>予約フォーム
+        <h1>産後ケアAnmmer<br>予約フォーム
         </h1>
 
         <div class="label">お客様名<span class="required">必須</span></div>
@@ -825,7 +825,7 @@
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">産後ケア60分</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">産後ケア6時間</button>
         </div>
 
         <div class="label">希望日時<span class="required">必須</span></div>
@@ -921,7 +921,7 @@
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '産後ケア60分': 30
+            '産後ケア6時間': 30
         };
 
         let selectedMenuTime = 0;
@@ -1503,8 +1503,7 @@ function updateDisplayInfo() {
             const table = calendar.querySelector('table tbody');
 
             const times = [
-                '10:00', '10:30', '11:00', '11:30',
-                '12:00'
+                '10:00', '10:30', '11:00', '11:30'
             ];
 
             if (table.rows.length === 0) {
