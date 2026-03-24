@@ -15,7 +15,7 @@
             /* さらに右へ */
             top: 80%;
             /* 画面中央に固定 */
-            transform: translateY(-50%) translateX(10px);
+            transform: translateY(-50%) translateX(16px);
             /* 中央配置と右ずらし */
             background: #ef86c9;
             display: flex;
@@ -96,7 +96,7 @@
             background-color: #fdfdfd;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 90%;
+            width: 96%;
             max-width: 500px;
             padding: 25px;
             box-sizing: border-box;
@@ -241,8 +241,26 @@
         .symptoms button.active,
         .menu-sections button.active,
         .irradiations button.active {
-            background-color: #ffffff;
+            background-color: #fff4f9;
             color: #141414;
+            border: 2px solid #ef86c9;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .symptoms button.active::after {
+            content: "✓ 選択中";
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background-color: #ef86c9;
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-bottom-left-radius: 6px;
+            border-top-right-radius: 2px;
+            font-weight: bold;
+            box-shadow: -1px 1px 3px rgba(0,0,0,0.1);
         }
 
         .date-inputs input[type="datetime-local"] {
@@ -798,32 +816,35 @@
         <h1>産後ケアAnmmer<br>予約フォーム
         </h1>
 
-        <div class="label">お客様名<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
-
-        <div class="label">電話番号<span class="required">必須</span></div>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
-
-        <div class="label">お住まいの市町村<span class="required">必須</span></div>
-        <input type="text" id="Municipality" placeholder="お住まいの市町村を入力してください" oninput="saveInput('Municipality')">
-
-        <div class="label">お子様のお名前<span class="required">必須</span></div>
-        <input type="text" id="child" placeholder="お子様のお名前を入力してください" oninput="saveInput('child')">
-
-        <div class="label">フリガナ<span class="required">必須</span></div>
-        <input type="text" id="Furigana" placeholder="フリガナを入力してください" oninput="saveInput('Furigana')">
-
-        <div class="label">お子様の生年月日<span class="required">必須</span></div>
-        <input type="text" id="birth" placeholder="お子様の生年月日を入力してください" oninput="saveInput('birth')">
-
         <div class="label">ご来店回数<span class="required">必須</span></div>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
+        <button type="button" id="toggleCustomerInfoBtn" onclick="toggleCustomerInfo()" style="width: 100%; padding: 15px; margin-bottom: 20px; background-color: #f7f7f7; color: #000000; border: 1px solid #000000; font-size: 16px; font-weight: bold; border-radius: 3px; cursor: pointer; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); transition: all 0.3s ease;">お客様情報の入力はこちら ▼</button>
+
+        <div id="customerInfoSection" style="display: none;">
+            <div class="label">お客様名<span class="required">必須</span></div>
+            <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
+
+            <div class="label">電話番号<span class="required">必須</span></div>
+            <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
+
+            <div class="label">お住まいの市町村<span class="required">必須</span></div>
+            <input type="text" id="Municipality" placeholder="お住まいの市町村を入力してください" oninput="saveInput('Municipality')">
+
+            <div class="label">お子様のお名前<span class="required">必須</span></div>
+            <input type="text" id="child" placeholder="お子様のお名前を入力してください" oninput="saveInput('child')">
+
+            <div class="label">フリガナ<span class="required">必須</span></div>
+            <input type="text" id="Furigana" placeholder="フリガナを入力してください" oninput="saveInput('Furigana')">
+
+            <div class="label">お子様の生年月日<span class="required">必須</span></div>
+            <input type="text" id="birth" placeholder="お子様の生年月日を入力してください" oninput="saveInput('birth')">
+        </div>
+
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
-        <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="symptoms">
             <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">産後ケア6時間</button>
         </div>
@@ -947,6 +968,21 @@
             if (savedchild) document.getElementById('child').value = savedchild;
             if (savedFurigana) document.getElementById('Furigana').value = savedFurigana;
             if (savedbirth) document.getElementById('birth').value = savedbirth;
+
+            // ご来店回数の復元（repeatVisitのみ）
+            const savedVisitCount = localStorage.getItem('visitCount');
+            if (savedVisitCount === 'repeatVisit') {
+                const repeatBtn = document.getElementById('repeatVisit');
+                if (repeatBtn) {
+                    selectVisit(repeatBtn);
+                }
+            }
+
+            // メニュー「産後ケア6時間」をデフォルトで選択
+            const defaultTreatmentBtn = document.querySelector('button[onclick*="treatment1"]');
+            if (defaultTreatmentBtn && !defaultTreatmentBtn.classList.contains('active')) {
+                defaultTreatmentBtn.click();
+            }
         });
 
         // スムーズスクロール
@@ -1116,7 +1152,21 @@ function updateDisplayInfo() {
         function scrollToElement(id) {
             const element = document.getElementById(id);
             if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // お客様情報関連のIDの場合はアコーディオンを展開する
+                const customerInfoIds = ['name', 'phone', 'Municipality', 'child', 'Furigana', 'birth'];
+                if (customerInfoIds.includes(id)) {
+                    const section = document.getElementById('customerInfoSection');
+                    const btn = document.getElementById('toggleCustomerInfoBtn');
+                    if (section && (section.style.display === 'none' || section.style.display === '')) {
+                        section.style.display = 'block';
+                        if (btn) btn.innerHTML = 'お客様情報の入力はこちら ▲';
+                    }
+                }
+                
+                // 展開によるレイアウト変更の反映を待ってスクロールする
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 50);
             }
         }
 
@@ -1135,24 +1185,7 @@ function updateDisplayInfo() {
             button.addEventListener('click', updateDisplayInfo);
         });
 
-        document.querySelectorAll('.symptoms button').forEach(button => {
-            button.addEventListener('click', () => {
-                const calendarContainer = document.querySelector('.calendar-container');
-
-                // 選択されたメニューがあればカレンダーを表示
-                if (document.querySelectorAll('.symptoms button.active').length > 0) {
-                    calendarContainer.style.display = 'block';
-                } else {
-                    // 選択が解除された場合、カレンダーを非表示
-                    calendarContainer.style.display = 'none';
-                }
-            });
-        });
-
-        // 初期状態でカレンダーを非表示にする
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('.calendar-container').style.display = 'none';
-        });
+        // カレンダーは常時表示とするため、表示切り替え処理を削除しました
 
         // 日付セルのクリックイベントで希望日時を更新
         document.querySelectorAll('.calendar td').forEach(cell => {
@@ -1292,6 +1325,21 @@ function updateDisplayInfo() {
 
             // 選択された訪問回数に対応する時間を取得
             selectedVisitTime = visitTimes[visitCount];
+
+            // ローカルストレージへの保存（repeatVisitは保存、firstVisitは削除）
+            if (element.id === 'repeatVisit') {
+                localStorage.setItem('visitCount', 'repeatVisit');
+            } else if (element.id === 'firstVisit') {
+                localStorage.removeItem('visitCount');
+
+                // 1回目選択時はお客様情報入力エリアを展開する
+                const section = document.getElementById('customerInfoSection');
+                const btn = document.getElementById('toggleCustomerInfoBtn');
+                if (section && (section.style.display === 'none' || section.style.display === '')) {
+                    section.style.display = 'block';
+                    if (btn) btn.innerHTML = 'お客様情報の入力はこちら ▲';
+                }
+            }
 
             console.log('選択された訪問回数の時間:', selectedVisitTime);
 
@@ -1503,7 +1551,7 @@ function updateDisplayInfo() {
             const table = calendar.querySelector('table tbody');
 
             const times = [
-                '10:00', '10:30', '11:00', '11:30'
+                '10:00'
             ];
 
             if (table.rows.length === 0) {
@@ -1539,9 +1587,9 @@ function updateDisplayInfo() {
             // 現在の日時を取得
             const now = new Date();
 
-// 1か月後の期限を設定
+// 3か月後の期限を設定
 const limitDate = new Date(now);
-limitDate.setMonth(limitDate.getMonth() + 1);
+limitDate.setMonth(limitDate.getMonth() + 3);
 
             // テーブルの内容を更新
             for (let i = 0; i < 7; i++) {
@@ -1577,7 +1625,7 @@ limitDate.setMonth(limitDate.getMonth() + 1);
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
-        // ✅ 1か月以降はすべて✕にする条件を追加
+        // ✅ 3か月以降はすべて✕にする条件を追加
         if (slotStart > limitDate) {
             cell.textContent = '✕';
             cell.classList.add('unavailable');
@@ -1631,6 +1679,16 @@ limitDate.setMonth(limitDate.getMonth() + 1);
                     }
                     // 営業日で、指定されている時間以外の時間は×
                     else if (businessEventTimes.length > 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
+                    // 日曜日で、営業日ではない場合
+                    else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
+                    // 日曜日で、営業日ではない場合
+                    else if (slotStart.getDay() === 6 && !isBusinessDay && businessEventTimes.length === 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
@@ -1785,6 +1843,18 @@ limitDate.setMonth(limitDate.getMonth() + 1);
 
         function hideLoadingSpinner() {
             document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        function toggleCustomerInfo() {
+            const section = document.getElementById('customerInfoSection');
+            const btn = document.getElementById('toggleCustomerInfoBtn');
+            if (section.style.display === 'none' || section.style.display === '') {
+                section.style.display = 'block';
+                btn.innerHTML = 'お客様情報の入力はこちら ▲';
+            } else {
+                section.style.display = 'none';
+                btn.innerHTML = 'お客様情報の入力はこちら ▼';
+            }
         }
     </script>
 </body>
