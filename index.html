@@ -842,6 +842,35 @@
 
             <div class="label">お子様の生年月日<span class="required">必須</span></div>
             <input type="text" id="birth" placeholder="お子様の生年月日を入力してください" oninput="saveInput('birth')">
+
+            <div class="label">産後ケア全利用回数<span class="required">必須</span></div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; background:#fff5fb; border:1px solid #ef86c9; border-radius:10px; padding:8px 10px;">
+                <button type="button" onclick="changeCount('totalUsageCount', -1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">－</button>
+                <input type="number" id="totalUsageCount" value="0" min="0" style="text-align:center; font-size:22px; font-weight:bold; width:100%; padding:6px 4px; border:none; background:transparent; color:#333; outline:none; -moz-appearance:textfield;" oninput="saveInput('totalUsageCount'); updateDisplayInfo();">
+                <button type="button" onclick="changeCount('totalUsageCount', 1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">＋</button>
+            </div>
+
+            <div class="label">利用通知書ナンバー<span class="required">必須</span></div>
+            <input type="text" id="noticeNumber" placeholder="利用通知書ナンバーを入力してください" oninput="saveInput('noticeNumber')">
+
+            <div class="label">Anmmer利用回数<span class="required">必須</span></div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; background:#fff5fb; border:1px solid #ef86c9; border-radius:10px; padding:8px 10px;">
+                <button type="button" onclick="changeCount('anmmerCount', -1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">－</button>
+                <input type="number" id="anmmerCount" value="0" min="0" style="text-align:center; font-size:22px; font-weight:bold; width:100%; padding:6px 4px; border:none; background:transparent; color:#333; outline:none; -moz-appearance:textfield;" oninput="saveInput('anmmerCount'); updateDisplayInfo();">
+                <button type="button" onclick="changeCount('anmmerCount', 1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">＋</button>
+            </div>
+
+            <div class="label">初産 or 経産<span class="required">必須</span></div>
+            <div class="visit-buttons" id="birthTypeButtons">
+                <button type="button" id="primiparaBtn" onclick="selectBirthType(this, '初産')">初産</button>
+                <button type="button" id="multiparaBtn" onclick="selectBirthType(this, '経産')">経産</button>
+            </div>
+
+            <div class="label">ＴＥＬ<span class="required">必須</span></div>
+            <input type="tel" id="tel" placeholder="ＴＥＬを入力してください" oninput="saveInput('tel')">
+
+            <div class="label">終結日</div>
+            <input type="text" id="endDate" placeholder="例：令和〇年〇月〇日" oninput="saveInput('endDate')">
         </div>
 
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
@@ -957,6 +986,16 @@
             localStorage.setItem(id, value);
         }
 
+        // ±1ボタンで数値を変更する関数（0未満にはならない）
+        function changeCount(id, delta) {
+            const input = document.getElementById(id);
+            let current = parseInt(input.value, 10) || 0;
+            current = Math.max(0, current + delta);
+            input.value = current;
+            localStorage.setItem(id, current);
+            updateDisplayInfo();
+        }
+
         // ページが読み込まれたときに前回の入力内容を復元
         document.addEventListener('DOMContentLoaded', function () {
             const savedName = localStorage.getItem('name');
@@ -965,6 +1004,12 @@
             const savedchild = localStorage.getItem('child');
             const savedFurigana = localStorage.getItem('Furigana');
             const savedbirth = localStorage.getItem('birth');
+            const savedTotalUsageCount = localStorage.getItem('totalUsageCount');
+            const savedNoticeNumber = localStorage.getItem('noticeNumber');
+            const savedAnmmerCount = localStorage.getItem('anmmerCount');
+            const savedBirthType = localStorage.getItem('birthType');
+            const savedTel = localStorage.getItem('tel');
+            const savedEndDate = localStorage.getItem('endDate');
 
             if (savedName) document.getElementById('name').value = savedName;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
@@ -972,6 +1017,16 @@
             if (savedchild) document.getElementById('child').value = savedchild;
             if (savedFurigana) document.getElementById('Furigana').value = savedFurigana;
             if (savedbirth) document.getElementById('birth').value = savedbirth;
+            if (savedTotalUsageCount) document.getElementById('totalUsageCount').value = savedTotalUsageCount;
+            if (savedNoticeNumber) document.getElementById('noticeNumber').value = savedNoticeNumber;
+            if (savedAnmmerCount) document.getElementById('anmmerCount').value = savedAnmmerCount;
+            if (savedTel) document.getElementById('tel').value = savedTel;
+            if (savedEndDate) document.getElementById('endDate').value = savedEndDate;
+            // 初産/経産の復元
+            if (savedBirthType) {
+                const btn = savedBirthType === '初産' ? document.getElementById('primiparaBtn') : document.getElementById('multiparaBtn');
+                if (btn) selectBirthType(btn, savedBirthType);
+            }
 
             // ご来店回数の復元（repeatVisitのみ）
             const savedVisitCount = localStorage.getItem('visitCount');
@@ -1076,7 +1131,12 @@ function updateDisplayInfo() {
     const child = document.getElementById('child').value;
     const Furigana = document.getElementById('Furigana').value;
     const birth = document.getElementById('birth').value;
-    
+    const totalUsageCount = document.getElementById('totalUsageCount').value;
+    const noticeNumber = document.getElementById('noticeNumber').value;
+    const anmmerCount = document.getElementById('anmmerCount').value;
+    const tel = document.getElementById('tel').value;
+    const endDate = document.getElementById('endDate').value;
+
     const labelStyle = "color:#0c0c0c; font-size:14px; border:1px solid #0c0c0c; padding:0px 3px; border-radius:4px;";
 
     const visitCountText = visitCount
@@ -1102,6 +1162,10 @@ function updateDisplayInfo() {
         ? `<span style="${labelStyle}"><strong>希望日時</strong></span> ${selectedFullDate}`
         : '・日時が未選択です';
 
+    const birthTypeText = birthType
+        ? `<span style="${labelStyle}"><strong>初産/経産</strong></span> ${birthType}`
+        : '・初産/経産が未選択です';
+
     // 修正ボタン付きのHTMLを作成
     document.getElementById('displayInfo').innerHTML = `
         <div class="info-row">
@@ -1119,7 +1183,7 @@ function updateDisplayInfo() {
             <button class="edit-button" onclick="scrollToElement('Municipality')">修正</button>
         </div>
         <hr>
-                <div class="info-row">
+        <div class="info-row">
             <p><span style="${labelStyle}"><strong>お子様のお名前</strong></span> ${child}</p>
             <button class="edit-button" onclick="scrollToElement('child')">修正</button>
         </div>
@@ -1132,6 +1196,36 @@ function updateDisplayInfo() {
         <div class="info-row">
             <p><span style="${labelStyle}"><strong>お子様の生年月日</strong></span> ${birth}</p>
             <button class="edit-button" onclick="scrollToElement('birth')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p><span style="${labelStyle}"><strong>産後ケア全利用回数</strong></span> ${totalUsageCount}</p>
+            <button class="edit-button" onclick="scrollToElement('totalUsageCount')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p><span style="${labelStyle}"><strong>利用通知書ナンバー</strong></span> ${noticeNumber}</p>
+            <button class="edit-button" onclick="scrollToElement('noticeNumber')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p><span style="${labelStyle}"><strong>Anmmer利用回数</strong></span> ${anmmerCount}</p>
+            <button class="edit-button" onclick="scrollToElement('anmmerCount')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p>${birthTypeText}</p>
+            <button class="edit-button" onclick="scrollToElement('birthTypeButtons')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p><span style="${labelStyle}"><strong>ＴＥＬ</strong></span> ${tel}</p>
+            <button class="edit-button" onclick="scrollToElement('tel')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p><span style="${labelStyle}"><strong>終結日</strong></span> ${endDate}</p>
+            <button class="edit-button" onclick="scrollToElement('endDate')">修正</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1152,12 +1246,24 @@ function updateDisplayInfo() {
     `;
         }
 
+        // 初産/経産選択
+        let birthType = '';
+        function selectBirthType(button, type) {
+            document.getElementById('primiparaBtn').classList.remove('active');
+            document.getElementById('multiparaBtn').classList.remove('active');
+            button.classList.add('active');
+            birthType = type;
+            localStorage.setItem('birthType', type);
+            updateDisplayInfo();
+        }
+
         // スクロール関数
         function scrollToElement(id) {
             const element = document.getElementById(id);
             if (element) {
                 // お客様情報関連のIDの場合はアコーディオンを展開する
-                const customerInfoIds = ['name', 'phone', 'Municipality', 'child', 'Furigana', 'birth'];
+                const customerInfoIds = ['name', 'phone', 'Municipality', 'child', 'Furigana', 'birth',
+                    'totalUsageCount', 'noticeNumber', 'anmmerCount', 'birthTypeButtons', 'tel', 'endDate'];
                 if (customerInfoIds.includes(id)) {
                     const section = document.getElementById('customerInfoSection');
                     const btn = document.getElementById('toggleCustomerInfoBtn');
@@ -1333,6 +1439,14 @@ function updateDisplayInfo() {
             // ローカルストレージへの保存（repeatVisitは保存、firstVisitは削除）
             if (element.id === 'repeatVisit') {
                 localStorage.setItem('visitCount', 'repeatVisit');
+
+                // 2回目以降選択時もお客様情報入力エリアを展開する
+                const section = document.getElementById('customerInfoSection');
+                const btn = document.getElementById('toggleCustomerInfoBtn');
+                if (section && (section.style.display === 'none' || section.style.display === '')) {
+                    section.style.display = 'block';
+                    if (btn) btn.innerHTML = 'お客様情報の入力はこちら ▲';
+                }
             } else if (element.id === 'firstVisit') {
                 localStorage.removeItem('visitCount');
 
@@ -1459,10 +1573,16 @@ function updateDisplayInfo() {
                 child: document.getElementById('child').value.trim(),
                 Furigana: document.getElementById('Furigana').value.trim(),
                 birth: document.getElementById('birth').value.trim(),
+                totalUsageCount: document.getElementById('totalUsageCount').value.trim(),
+                noticeNumber: document.getElementById('noticeNumber').value.trim(),
+                anmmerCount: document.getElementById('anmmerCount').value.trim(),
+                birthType: birthType,
+                tel: document.getElementById('tel').value.trim(),
+                endDate: document.getElementById('endDate').value.trim(),
                 visitCount: visitCount,
                 selectedMenu: selectedMenu,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-                dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
+                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
+                dates: selectedFullDate ? [selectedFullDate] : null,
                 message: document.getElementById('message').value.trim()
             };
 
@@ -1474,6 +1594,11 @@ function updateDisplayInfo() {
 
             if (!formData.phone) {
                 alert('電話番号を入力してください。');
+                return;
+            }
+
+            if (!formData.tel) {
+                alert('ＴＥＬを入力してください。');
                 return;
             }
 
@@ -1490,7 +1615,7 @@ function updateDisplayInfo() {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nお住まいの市町村：${formData.Municipality}\nお子様のお名前：${formData.child}\nフリガナ：${formData.Furigana}\nお子様の生年月日：${formData.birth}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nお住まいの市町村：${formData.Municipality}\nお子様のお名前：${formData.child}\nフリガナ：${formData.Furigana}\nお子様の生年月日：${formData.birth}\n産後ケア全利用回数：${formData.totalUsageCount}\n利用通知書ナンバー：${formData.noticeNumber}\nAnmmer利用回数：${formData.anmmerCount}\n初産/経産：${formData.birthType}\nＴＥＬ：${formData.tel}\n終結日：${formData.endDate}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
