@@ -869,7 +869,7 @@
             <div class="label">ＴＥＬ<span class="required">必須</span></div>
             <input type="tel" id="tel" placeholder="ＴＥＬを入力してください" oninput="saveInput('tel')">
 
-            <div class="label">終結日</div>
+            <div class="label">終結日<span class="required">必須</span></div>
             <input type="text" id="endDate" placeholder="例：令和〇年〇月〇日" oninput="saveInput('endDate')">
         </div>
 
@@ -1599,6 +1599,11 @@ function updateDisplayInfo() {
 
             if (!formData.tel) {
                 alert('ＴＥＬを入力してください。');
+                return;
+            }
+
+            if (!formData.endDate) {
+                alert('終結日を入力してください。');
                 return;
             }
 
