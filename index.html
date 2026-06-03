@@ -816,15 +816,23 @@
         <h1>産後ケアAnmmer<br>予約フォーム
         </h1>
 
-        <div class="label">ご来店回数<span class="required">必須</span></div>
-        <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
-        </div>
-
         <button type="button" id="toggleCustomerInfoBtn" onclick="toggleCustomerInfo()" style="width: 100%; padding: 15px; margin-bottom: 20px; background-color: #f7f7f7; color: #000000; border: 1px solid #000000; font-size: 16px; font-weight: bold; border-radius: 3px; cursor: pointer; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); transition: all 0.3s ease;">お客様情報の入力はこちら ▼</button>
 
         <div id="customerInfoSection" style="display: none;">
+            <div class="label">Anmmer利用回数<span class="required">必須</span></div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; background:#fff5fb; border:1px solid #ef86c9; border-radius:10px; padding:8px 10px;">
+                <button type="button" onclick="changeCount('anmmerCount', -1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">－</button>
+                <input type="number" id="anmmerCount" value="0" min="0" style="text-align:center; font-size:22px; font-weight:bold; width:100%; padding:6px 4px; border:none; background:transparent; color:#333; outline:none; -moz-appearance:textfield;" oninput="saveInput('anmmerCount'); updateDisplayInfo();">
+                <button type="button" onclick="changeCount('anmmerCount', 1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">＋</button>
+            </div>
+
+            <div class="label">産後ケア全利用回数<span class="required">必須</span></div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; background:#fff5fb; border:1px solid #ef86c9; border-radius:10px; padding:8px 10px;">
+                <button type="button" onclick="changeCount('totalUsageCount', -1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">－</button>
+                <input type="number" id="totalUsageCount" value="0" min="0" style="text-align:center; font-size:22px; font-weight:bold; width:100%; padding:6px 4px; border:none; background:transparent; color:#333; outline:none; -moz-appearance:textfield;" oninput="saveInput('totalUsageCount'); updateDisplayInfo();">
+                <button type="button" onclick="changeCount('totalUsageCount', 1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">＋</button>
+            </div>
+
             <div class="label">お客様名<span class="required">必須</span></div>
             <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
@@ -843,22 +851,8 @@
             <div class="label">お子様の生年月日<span class="required">必須</span></div>
             <input type="text" id="birth" placeholder="お子様の生年月日を入力してください" oninput="saveInput('birth')">
 
-            <div class="label">産後ケア全利用回数<span class="required">必須</span></div>
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; background:#fff5fb; border:1px solid #ef86c9; border-radius:10px; padding:8px 10px;">
-                <button type="button" onclick="changeCount('totalUsageCount', -1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">－</button>
-                <input type="number" id="totalUsageCount" value="0" min="0" style="text-align:center; font-size:22px; font-weight:bold; width:100%; padding:6px 4px; border:none; background:transparent; color:#333; outline:none; -moz-appearance:textfield;" oninput="saveInput('totalUsageCount'); updateDisplayInfo();">
-                <button type="button" onclick="changeCount('totalUsageCount', 1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">＋</button>
-            </div>
-
             <div class="label">利用通知書ナンバー<span class="required">必須</span></div>
             <input type="text" id="noticeNumber" placeholder="利用通知書ナンバーを入力してください" oninput="saveInput('noticeNumber')">
-
-            <div class="label">Anmmer利用回数<span class="required">必須</span></div>
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; background:#fff5fb; border:1px solid #ef86c9; border-radius:10px; padding:8px 10px;">
-                <button type="button" onclick="changeCount('anmmerCount', -1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">－</button>
-                <input type="number" id="anmmerCount" value="0" min="0" style="text-align:center; font-size:22px; font-weight:bold; width:100%; padding:6px 4px; border:none; background:transparent; color:#333; outline:none; -moz-appearance:textfield;" oninput="saveInput('anmmerCount'); updateDisplayInfo();">
-                <button type="button" onclick="changeCount('anmmerCount', 1)" style="width:42px; height:42px; font-size:24px; font-weight:900; border:none; border-radius:8px; background:linear-gradient(135deg,#ef86c9,#e060b0); color:#fff; cursor:pointer; flex-shrink:0; box-shadow:0 3px 8px rgba(239,134,201,0.45); transition:transform 0.15s,box-shadow 0.15s; line-height:1;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.93)'" ontouchend="this.style.transform='scale(1)'">＋</button>
-            </div>
 
             <div class="label">初産 or 経産<span class="required">必須</span></div>
             <div class="visit-buttons" id="birthTypeButtons">
@@ -1026,15 +1020,6 @@
             if (savedBirthType) {
                 const btn = savedBirthType === '初産' ? document.getElementById('primiparaBtn') : document.getElementById('multiparaBtn');
                 if (btn) selectBirthType(btn, savedBirthType);
-            }
-
-            // ご来店回数の復元（repeatVisitのみ）
-            const savedVisitCount = localStorage.getItem('visitCount');
-            if (savedVisitCount === 'repeatVisit') {
-                const repeatBtn = document.getElementById('repeatVisit');
-                if (repeatBtn) {
-                    selectVisit(repeatBtn);
-                }
             }
 
             // メニュー「産後ケア6時間」をデフォルトで選択
@@ -1226,11 +1211,6 @@ function updateDisplayInfo() {
         <div class="info-row">
             <p><span style="${labelStyle}"><strong>終結日</strong></span> ${endDate}</p>
             <button class="edit-button" onclick="scrollToElement('endDate')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${visitCountText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstVisit')">修正</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1620,7 +1600,7 @@ function updateDisplayInfo() {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nお住まいの市町村：${formData.Municipality}\nお子様のお名前：${formData.child}\nフリガナ：${formData.Furigana}\nお子様の生年月日：${formData.birth}\n産後ケア全利用回数：${formData.totalUsageCount}\n利用通知書ナンバー：${formData.noticeNumber}\nAnmmer利用回数：${formData.anmmerCount}\n初産/経産：${formData.birthType}\nＴＥＬ：${formData.tel}\n終結日：${formData.endDate}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nお住まいの市町村：${formData.Municipality}\nお子様のお名前：${formData.child}\nフリガナ：${formData.Furigana}\nお子様の生年月日：${formData.birth}\n産後ケア全利用回数：${formData.totalUsageCount}\n利用通知書ナンバー：${formData.noticeNumber}\nAnmmer利用回数：${formData.anmmerCount}\n初産/経産：${formData.birthType}\nＴＥＬ：${formData.tel}\n終結日：${formData.endDate}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
