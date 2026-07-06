@@ -857,9 +857,6 @@
                 <button type="button" id="multiparaBtn" onclick="selectBirthType(this, '経産')">経産</button>
             </div>
 
-            <div class="label">利用通知書ナンバー<span class="required">必須</span></div>
-            <input type="text" id="noticeNumber" placeholder="利用通知書ナンバーを入力してください" oninput="saveInput('noticeNumber')">
-
             <div class="label">終結日<span class="required">必須</span></div>
             <input type="text" id="endDate" placeholder="例：令和〇年〇月〇日" oninput="saveInput('endDate')">
         </div>
@@ -996,7 +993,6 @@
             const savedFurigana = localStorage.getItem('Furigana');
             const savedbirth = localStorage.getItem('birth');
             const savedTotalUsageCount = localStorage.getItem('totalUsageCount');
-            const savedNoticeNumber = localStorage.getItem('noticeNumber');
             const savedAnmmerCount = localStorage.getItem('anmmerCount');
             const savedBirthType = localStorage.getItem('birthType');
             const savedEndDate = localStorage.getItem('endDate');
@@ -1008,7 +1004,6 @@
             if (savedFurigana) document.getElementById('Furigana').value = savedFurigana;
             if (savedbirth) document.getElementById('birth').value = savedbirth;
             if (savedTotalUsageCount) document.getElementById('totalUsageCount').value = savedTotalUsageCount;
-            if (savedNoticeNumber) document.getElementById('noticeNumber').value = savedNoticeNumber;
             if (savedAnmmerCount) document.getElementById('anmmerCount').value = savedAnmmerCount;
             if (savedEndDate) document.getElementById('endDate').value = savedEndDate;
             // 初産/経産の復元
@@ -1112,7 +1107,6 @@ function updateDisplayInfo() {
     const Furigana = document.getElementById('Furigana').value;
     const birth = document.getElementById('birth').value;
     const totalUsageCount = document.getElementById('totalUsageCount').value;
-    const noticeNumber = document.getElementById('noticeNumber').value;
     const anmmerCount = document.getElementById('anmmerCount').value;
     const endDate = document.getElementById('endDate').value;
 
@@ -1193,11 +1187,6 @@ function updateDisplayInfo() {
         </div>
         <hr>
         <div class="info-row">
-            <p><span style="${labelStyle}"><strong>利用通知書ナンバー</strong></span> ${noticeNumber}</p>
-            <button class="edit-button" onclick="scrollToElement('noticeNumber')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
             <p><span style="${labelStyle}"><strong>終結日</strong></span> ${endDate}</p>
             <button class="edit-button" onclick="scrollToElement('endDate')">修正</button>
         </div>
@@ -1232,7 +1221,7 @@ function updateDisplayInfo() {
             if (element) {
                 // お客様情報関連のIDの場合はアコーディオンを展開する
                 const customerInfoIds = ['name', 'phone', 'Municipality', 'child', 'Furigana', 'birth',
-                    'totalUsageCount', 'noticeNumber', 'anmmerCount', 'birthTypeButtons', 'endDate'];
+                    'totalUsageCount', 'anmmerCount', 'birthTypeButtons', 'endDate'];
                 if (customerInfoIds.includes(id)) {
                     const section = document.getElementById('customerInfoSection');
                     const btn = document.getElementById('toggleCustomerInfoBtn');
@@ -1543,7 +1532,6 @@ function updateDisplayInfo() {
                 Furigana: document.getElementById('Furigana').value.trim(),
                 birth: document.getElementById('birth').value.trim(),
                 totalUsageCount: document.getElementById('totalUsageCount').value.trim(),
-                noticeNumber: document.getElementById('noticeNumber').value.trim(),
                 anmmerCount: document.getElementById('anmmerCount').value.trim(),
                 birthType: birthType,
                 endDate: document.getElementById('endDate').value.trim(),
@@ -1583,7 +1571,7 @@ function updateDisplayInfo() {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n産後ケア全利用回数：${formData.totalUsageCount}\nAnmmer利用回数：${formData.anmmerCount}\nお住まいの市町村：${formData.Municipality}\nお名前：${formData.name}\n電話番号：${formData.phone}\nお子様のお名前：${formData.child}\nお子様のお名前（フリガナ）：${formData.Furigana}\nお子様の生年月日：${formData.birth}\n初産/経産：${formData.birthType}\n利用通知書ナンバー：${formData.noticeNumber}\n終結日：${formData.endDate}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n産後ケア全利用回数：${formData.totalUsageCount}\nAnmmer利用回数：${formData.anmmerCount}\nお住まいの市町村：${formData.Municipality}\nお名前：${formData.name}\n電話番号：${formData.phone}\nお子様のお名前：${formData.child}\nお子様のお名前（フリガナ）：${formData.Furigana}\nお子様の生年月日：${formData.birth}\n初産/経産：${formData.birthType}\n終結日：${formData.endDate}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
