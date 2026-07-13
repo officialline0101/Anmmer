@@ -857,10 +857,6 @@
                 <button type="button" id="multiparaBtn" onclick="selectBirthType(this, '経産')">経産</button>
             </div>
 
-            <div class="label">終結日<span class="required">必須</span></div>
-            <input type="text" id="endDate" placeholder="例：令和〇年〇月〇日" oninput="saveInput('endDate')">
-        </div>
-
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
         <div class="symptoms">
             <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">産後ケア6時間</button>
@@ -1184,11 +1180,6 @@ function updateDisplayInfo() {
         <div class="info-row">
             <p>${birthTypeText}</p>
             <button class="edit-button" onclick="scrollToElement('birthTypeButtons')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p><span style="${labelStyle}"><strong>終結日</strong></span> ${endDate}</p>
-            <button class="edit-button" onclick="scrollToElement('endDate')">修正</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1553,11 +1544,6 @@ function updateDisplayInfo() {
                 return;
             }
 
-            if (!formData.endDate) {
-                alert('終結日を入力してください。');
-                return;
-            }
-
             if (!formData.selectedSymptom) {
                 alert('メニューを選択してください。');
                 return;
@@ -1571,7 +1557,7 @@ function updateDisplayInfo() {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n産後ケア全利用回数：${formData.totalUsageCount}\nAnmmer利用回数：${formData.anmmerCount}\nお住まいの市町村：${formData.Municipality}\nお名前：${formData.name}\n電話番号：${formData.phone}\nお子様のお名前：${formData.child}\nお子様のお名前（フリガナ）：${formData.Furigana}\nお子様の生年月日：${formData.birth}\n初産/経産：${formData.birthType}\n終結日：${formData.endDate}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n産後ケア全利用回数：${formData.totalUsageCount}\nAnmmer利用回数：${formData.anmmerCount}\nお住まいの市町村：${formData.Municipality}\nお名前：${formData.name}\n電話番号：${formData.phone}\nお子様のお名前：${formData.child}\nお子様のお名前（フリガナ）：${formData.Furigana}\nお子様の生年月日：${formData.birth}\n初産/経産：${formData.birthType}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
