@@ -856,6 +856,7 @@
                 <button type="button" id="primiparaBtn" onclick="selectBirthType(this, '初産')">初産</button>
                 <button type="button" id="multiparaBtn" onclick="selectBirthType(this, '経産')">経産</button>
             </div>
+        </div>
 
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
         <div class="symptoms">
@@ -991,7 +992,6 @@
             const savedTotalUsageCount = localStorage.getItem('totalUsageCount');
             const savedAnmmerCount = localStorage.getItem('anmmerCount');
             const savedBirthType = localStorage.getItem('birthType');
-            const savedEndDate = localStorage.getItem('endDate');
 
             if (savedName) document.getElementById('name').value = savedName;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
@@ -1001,7 +1001,6 @@
             if (savedbirth) document.getElementById('birth').value = savedbirth;
             if (savedTotalUsageCount) document.getElementById('totalUsageCount').value = savedTotalUsageCount;
             if (savedAnmmerCount) document.getElementById('anmmerCount').value = savedAnmmerCount;
-            if (savedEndDate) document.getElementById('endDate').value = savedEndDate;
             // 初産/経産の復元
             if (savedBirthType) {
                 const btn = savedBirthType === '初産' ? document.getElementById('primiparaBtn') : document.getElementById('multiparaBtn');
@@ -1104,7 +1103,6 @@ function updateDisplayInfo() {
     const birth = document.getElementById('birth').value;
     const totalUsageCount = document.getElementById('totalUsageCount').value;
     const anmmerCount = document.getElementById('anmmerCount').value;
-    const endDate = document.getElementById('endDate').value;
 
     const labelStyle = "color:#0c0c0c; font-size:14px; border:1px solid #0c0c0c; padding:0px 3px; border-radius:4px;";
 
@@ -1212,7 +1210,7 @@ function updateDisplayInfo() {
             if (element) {
                 // お客様情報関連のIDの場合はアコーディオンを展開する
                 const customerInfoIds = ['name', 'phone', 'Municipality', 'child', 'Furigana', 'birth',
-                    'totalUsageCount', 'anmmerCount', 'birthTypeButtons', 'endDate'];
+                    'totalUsageCount', 'anmmerCount', 'birthTypeButtons'];
                 if (customerInfoIds.includes(id)) {
                     const section = document.getElementById('customerInfoSection');
                     const btn = document.getElementById('toggleCustomerInfoBtn');
@@ -1525,7 +1523,6 @@ function updateDisplayInfo() {
                 totalUsageCount: document.getElementById('totalUsageCount').value.trim(),
                 anmmerCount: document.getElementById('anmmerCount').value.trim(),
                 birthType: birthType,
-                endDate: document.getElementById('endDate').value.trim(),
                 visitCount: visitCount,
                 selectedMenu: selectedMenu,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
