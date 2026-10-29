@@ -196,6 +196,7 @@
 
         input[type="text"],
         input[type="tel"],
+        select#Municipality,
         textarea {
             width: 100%;
             padding: 12px;
@@ -847,7 +848,62 @@
             </div>
 
             <div class="label">お住まいの市町村<span class="required">必須</span></div>
-            <input type="text" id="Municipality" placeholder="お住まいの市町村を入力してください" oninput="saveInput('Municipality')">
+            <select id="Municipality" onchange="onMunicipalityChange()" style="background:#fff; color:#333;">
+                <option value="">お住まいの市町村を選択してください</option>
+                <optgroup label="市">
+                    <option>那覇市</option>
+                    <option>宜野湾市</option>
+                    <option>石垣市</option>
+                    <option>浦添市</option>
+                    <option>名護市</option>
+                    <option>糸満市</option>
+                    <option>沖縄市</option>
+                    <option>豊見城市</option>
+                    <option>うるま市</option>
+                    <option>宮古島市</option>
+                    <option>南城市</option>
+                </optgroup>
+                <optgroup label="国頭郡">
+                    <option>国頭村</option>
+                    <option>大宜味村</option>
+                    <option>東村</option>
+                    <option>今帰仁村</option>
+                    <option>本部町</option>
+                    <option>恩納村</option>
+                    <option>宜野座村</option>
+                    <option>金武町</option>
+                    <option>伊江村</option>
+                </optgroup>
+                <optgroup label="中頭郡">
+                    <option>読谷村</option>
+                    <option>嘉手納町</option>
+                    <option>北谷町</option>
+                    <option>北中城村</option>
+                    <option>中城村</option>
+                    <option>西原町</option>
+                </optgroup>
+                <optgroup label="島尻郡">
+                    <option>与那原町</option>
+                    <option>南風原町</option>
+                    <option>渡嘉敷村</option>
+                    <option>座間味村</option>
+                    <option>粟国村</option>
+                    <option>渡名喜村</option>
+                    <option>南大東村</option>
+                    <option>北大東村</option>
+                    <option>伊平屋村</option>
+                    <option>伊是名村</option>
+                    <option>久米島町</option>
+                    <option>八重瀬町</option>
+                </optgroup>
+                <optgroup label="宮古郡">
+                    <option>多良間村</option>
+                </optgroup>
+                <optgroup label="八重山郡">
+                    <option>竹富町</option>
+                    <option>与那国町</option>
+                </optgroup>
+            </select>
 
             <div class="label">お客様名<span class="required">必須</span></div>
             <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
@@ -964,6 +1020,68 @@
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
+        let currentAvailability = []; // 表示中の週のカレンダーデータ
+
+        // 「看護師のみの日」（カレンダーに終日予定「看護師のみ」がある日）でも受け入れ可能な市町村
+        // ここに無い市町村は、看護師のみの日は✕になる（予約システムのgas.gs の同名定数と揃えること）
+        const NURSE_ONLY_TITLE = '看護師のみ';
+        const NURSE_ONLY_OK_MUNICIPALITIES = ['南風原町', '与那原町', '渡嘉敷村'];
+
+        // 予定のタイトルを取得（doGet の返却形式により title / summary のどちらか）
+        function getSlotTitle(slot) {
+            return String(slot.title || slot.summary || '').trim();
+        }
+
+        function isNurseOnlySlot(slot) {
+            return getSlotTitle(slot) === NURSE_ONLY_TITLE;
+        }
+
+        // 指定日が「看護師のみの日」かどうか
+        function isNurseOnlyDay(day, availability) {
+            const dayStart = new Date(day);
+            dayStart.setHours(0, 0, 0, 0);
+            const dayEnd = new Date(dayStart);
+            dayEnd.setDate(dayEnd.getDate() + 1);
+            return (availability || []).some(slot => {
+                if (!isNurseOnlySlot(slot)) return false;
+                const eventStart = new Date(slot.startTime);
+                const eventEnd = new Date(slot.endTime);
+                return eventStart < dayEnd && dayStart < eventEnd;
+            });
+        }
+
+        // 旧入力形式（「沖縄県南風原町」「南風原」など）も選択肢の名前に揃える
+        function normalizeMunicipality(name) {
+            let s = String(name || '').replace(/\s/g, '').replace(/^沖縄県/, '');
+            if (!s) return '';
+            const select = document.getElementById('Municipality');
+            const options = Array.from(select.options).map(o => o.value).filter(v => v);
+            if (options.includes(s)) return s;
+            const hit = options.find(o => o.replace(/[市町村]$/, '') === s);
+            return hit || '';
+        }
+
+        // 「yyyy年MM月dd日 HH:mm」形式の希望日時を Date に変換
+        function parseSelectedFullDate(str) {
+            const m = String(str || '').match(/^(\d{4})年(\d{1,2})月(\d{1,2})日/);
+            return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+        }
+
+        function isNurseOnlyAcceptable(municipality) {
+            return NURSE_ONLY_OK_MUNICIPALITIES.includes(municipality);
+        }
+
+        // 市町村を変更したとき：保存し、選択中の日が予約不可になった場合は選択を解除してカレンダーを再描画
+        function onMunicipalityChange() {
+            saveInput('Municipality');
+            const municipality = document.getElementById('Municipality').value;
+            const selectedDay = parseSelectedFullDate(selectedFullDate);
+            if (selectedDay && isNurseOnlyDay(selectedDay, currentAvailability) && !isNurseOnlyAcceptable(municipality)) {
+                selectedFullDate = '';
+            }
+            fetchAvailability(currentDate);
+            updateDisplayInfo();
+        }
         let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
         let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
@@ -1050,7 +1168,7 @@
             if (savedName) document.getElementById('name').value = savedName;
             if (savedNameFurigana) document.getElementById('nameFurigana').value = savedNameFurigana;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
-            if (savedMunicipality) document.getElementById('Municipality').value = savedMunicipality;
+            if (savedMunicipality) document.getElementById('Municipality').value = normalizeMunicipality(savedMunicipality);
             if (savedchild) document.getElementById('child').value = savedchild;
             if (savedFurigana) document.getElementById('Furigana').value = savedFurigana;
             if (savedbirth) document.getElementById('birth').value = savedbirth;
@@ -1614,6 +1732,11 @@ function updateDisplayInfo() {
                 return;
             }
 
+            if (!formData.Municipality) {
+                alert('お住まいの市町村を選択してください。');
+                return;
+            }
+
             if (!formData.selectedSymptom) {
                 alert('メニューを選択してください。');
                 return;
@@ -1621,6 +1744,13 @@ function updateDisplayInfo() {
 
             if (!formData.dates) {
                 alert('希望日時を選択してください。');
+                return;
+            }
+
+            // 選択中の日が看護師のみの日で、受け入れ不可の市町村の場合
+            const selectedDay = parseSelectedFullDate(selectedFullDate);
+            if (selectedDay && isNurseOnlyDay(selectedDay, currentAvailability) && !isNurseOnlyAcceptable(formData.Municipality)) {
+                alert('選択された市町村では、この日はご予約いただけません。別の日を選択してください。');
                 return;
             }
 
@@ -1690,6 +1820,8 @@ function updateDisplayInfo() {
         function updateCalendar(availability, businessDays) {
             const calendar = document.getElementById('calendar1');
             const table = calendar.querySelector('table tbody');
+            currentAvailability = availability;
+            const municipality = document.getElementById('Municipality').value;
 
             const times = [
                 '10:00'
@@ -1788,6 +1920,13 @@ limitDate.setMonth(limitDate.getMonth() + 3);
                         continue;
                     }
 
+                    // 看護師のみの日は、受け入れ可能な市町村以外（未選択を含む）は✕
+                    if (isNurseOnlyDay(day, availability) && !isNurseOnlyAcceptable(municipality)) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
+
                     const isBusinessDay = businessDays.some(businessDay => {
                         const businessDayStart = new Date(businessDay.start);
                         const businessDayEnd = new Date(businessDay.end);
@@ -1802,7 +1941,8 @@ limitDate.setMonth(limitDate.getMonth() + 3);
                         const eventStart = new Date(slot.startTime);
                         const eventEnd = new Date(slot.endTime);
 
-                        if (eventStart < slotEnd && slotStart < eventEnd && slot.title !== "営業日") {
+                        // 「看護師のみ」の予定は予約件数に含めない
+                        if (eventStart < slotEnd && slotStart < eventEnd && slot.title !== "営業日" && !isNurseOnlySlot(slot)) {
                             return acc + 1;
                         }
                         return acc;
